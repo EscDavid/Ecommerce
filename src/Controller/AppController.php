@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventInterface;
 
 /**
  * Application Controller
@@ -66,4 +67,15 @@ class AppController extends Controller
          */
         //$this->loadComponent('FormProtection');
     }
+    public function beforeRender(\Cake\Event\EventInterface $event)
+{
+    //login check
+    if($this->request->getSession()->read('Auth.User')){
+        $this->set('loggedIn',true);
+    }
+    else{
+        $this->set('loggedIn',false);
+    }
+}
+
 }

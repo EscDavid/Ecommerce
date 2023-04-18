@@ -1,7 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
+
+use cake\Event\Event;
 
 /**
  * Users Controller
@@ -108,25 +111,45 @@ class UsersController extends AppController
     }
 
     //ingreso
-    public function login(){
-        if($this->request->is('post')){
+    public function login()
+    {
+        if ($this->request->is('post')) {
             $user = $this->Auth->identify();
-            if($user){
+            if ($user) {
                 $this->Auth->setUser($user);
-                return $this->redirect(['controller'=> 'posts']);
-
+                return $this->redirect(['controller' => 'posts']);
             }
             $this->Flash->error('Ingreso invalido');
-
         }
     }
     //cerrar sesion
-    public function logout(){
-        $this->Flash->success('sesion cerrada correctamente');
+    public function logout()
+    {
+        $this->Flash->success('Sesion cerrada correctamente');
         return $this->redirect($this->Auth->logout());
     }
     //registro
-        public function register(){
+    public function register()
+{
+    $user = $this->Users->newEmptyEntity();
+    if ($this->request->is('post')) {
+        $user = $this->Users->patchEntity($user, $this->request->getData());
+        if ($this->Users->save($user)) {
+            $this->Flash->success(__('El usuario ha sido registrado.'));
 
+            return $this->redirect(['action' => 'login']);
         }
+        else{
+        $this->Flash->error(__('El usuario no pudo ser registrado. Por favor, intente nuevamente.'));}
+    }
+    $this->set(compact('user'));
+    $this->set('_serialize',['user']);
+}
+
+    
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+        parent::beforeFilter($event);
+        $this->Auth->allow(['register']);
+    }
 }
