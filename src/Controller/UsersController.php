@@ -66,6 +66,8 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
+
+    // Editar usuario
     public function edit($id = null)
     {
         $user = $this->Users->get($id, [
@@ -90,6 +92,8 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null|void Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
+
+    //Eliminar Usuario
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
@@ -102,4 +106,27 @@ class UsersController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+    //ingreso
+    public function login(){
+        if($this->request->is('post')){
+            $user = $this->Auth->identify();
+            if($user){
+                $this->Auth->setUser($user);
+                return $this->redirect(['controller'=> 'posts']);
+
+            }
+            $this->Flash->error('Ingreso invalido');
+
+        }
+    }
+    //cerrar sesion
+    public function logout(){
+        $this->Flash->success('sesion cerrada correctamente');
+        return $this->redirect($this->Auth->logout());
+    }
+    //registro
+        public function register(){
+
+        }
 }
